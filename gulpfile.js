@@ -22,7 +22,8 @@ var SOURCEPATHS = {
 var APPPATH = {
     root: 'app/',
     css : 'app/css',
-    js : 'app/js'
+    js : 'app/js',
+    fonts : 'app/fonts'
 }
 
 // (gulp.task)defines a new task with a name, optional array of dependencies and a function.
@@ -52,6 +53,11 @@ gulp.task('sass', function(){
         .pipe(gulp.dest(APPPATH.css));
 });
 
+gulp.task('moveFonts', function() {
+    gulp.src('./node_modules/bootstrap/fonts/*.{eot,svg,ttf,woff,woff2}')
+        .pipe(gulp.dest(APPPATH.fonts));
+});
+
 gulp.task('scripts', ['clean-scripts'], function() {
     gulp
       .src(SOURCEPATHS.jsSource)
@@ -76,7 +82,7 @@ gulp.task('serve', ['sass'], function() {
 });
 
 // runs both tasks and you can add more tasks by adding a comma
-gulp.task('watch', ['serve', 'sass', 'copy', 'clean-html', 'clean-scripts', 'scripts'], function () {
+gulp.task('watch', ['serve', 'sass', 'copy', 'clean-html', 'clean-scripts', 'scripts', 'moveFonts'], function () {
     
     // listens for 
     gulp.watch([SOURCEPATHS.sassSource], ['sass']);  
