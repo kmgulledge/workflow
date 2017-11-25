@@ -8,6 +8,8 @@ var browserify = require('gulp-browserify');
 var clean = require('gulp-clean');
 var concat = require('gulp-concat');
 var merge = require('merge-stream');
+var newer = require('gulp-newer');
+var imagemin = require('gulp-imagemin');
 
 // points to all the files in the source folder
 var SOURCEPATHS = {
@@ -15,7 +17,8 @@ var SOURCEPATHS = {
     // * will check for any file that has the .scss extension in this folder. 
     sassSource : 'src/scss/*.scss',
     htmlSource : 'src/*html',
-    jsSource : 'src/js/**'
+    jsSource : 'src/js/**',
+    imgSource : 'src/img/**'
 }
 
 // points to all the files in the app folder
@@ -23,7 +26,8 @@ var APPPATH = {
     root: 'app/',
     css : 'app/css',
     js : 'app/js',
-    fonts : 'app/fonts'
+    fonts : 'app/fonts',
+    img: 'app/img'
 }
 
 // (gulp.task)defines a new task with a name, optional array of dependencies and a function.
@@ -51,6 +55,13 @@ gulp.task('sass', function(){
     return merge(bootstrapCSS, sassFiles)
         .pipe(concat('app.css'))
         .pipe(gulp.dest(APPPATH.css));
+});
+
+gulp.task('images', function() {
+    return gulp.src(SOURCEPATHS.imgSource)
+        .pipe(newer(APPPATH.img))
+        .pipe(imagemin())
+        .pipe(gulp.dest(APPPATH.img));
 });
 
 gulp.task('moveFonts', function() {
@@ -82,7 +93,7 @@ gulp.task('serve', ['sass'], function() {
 });
 
 // runs both tasks and you can add more tasks by adding a comma
-gulp.task('watch', ['serve', 'sass', 'copy', 'clean-html', 'clean-scripts', 'scripts', 'moveFonts'], function () {
+gulp.task('watch', ['serve', 'sass', 'copy', 'clean-html', 'clean-scripts', 'scripts', 'moveFonts', 'images'], function () {
     
     // listens for 
     gulp.watch([SOURCEPATHS.sassSource], ['sass']);  
